@@ -2,8 +2,8 @@
 title Git Update Menu
 color 0A
 
-REM Go to your project folder
-cd /d "D:\01_RFDEV\update\"
+REM Go to your project folder replace path of yours
+cd /d "D:\04_AoP\development"
 
 :MENU
 cls
