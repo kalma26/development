@@ -1,16 +1,19 @@
 @echo off
 title Git Update Menu
 color 0A
+setlocal enabledelayedexpansion
 
-REM Go to your project folder replace path of yours
-cd /d "D:\04_AoP\development"
+REM Use current folder (works on any drive where the bat file is located)
+cd /d "%~dp0"
 
 :MENU
 cls
 echo ==================================
-echo         GIT UPDATE MENU 
+echo         GIT UPDATE MENU
 echo dev: MasterDoom , eD
 echo ==================================
+echo.
+echo Current Folder: %cd%
 echo.
 echo [1] Check Co Dev Update
 echo [2] Update From You
@@ -27,10 +30,12 @@ echo Invalid option!
 pause
 goto MENU
 
+
 :PULL
 echo.
 echo Running: git pull
 git pull
+
 if %ERRORLEVEL% neq 0 (
     echo Error during git pull
     pause
@@ -42,31 +47,61 @@ echo Update checked successfully!
 pause
 goto MENU
 
+
 :PUSH
 echo.
-echo Running: git add *
-git add *
+echo Running: git add .
+git add .
+
 if %ERRORLEVEL% neq 0 (
     echo Error during git add
     pause
     goto MENU
 )
 
-REM Commit with current date and time
-for /f "tokens=1-4 delims=/ " %%a in ('date /t') do set DATE=%%a-%%b-%%c
-for /f "tokens=1-2 delims=: " %%a in ('time /t') do set TIME=%%a-%%b
-set MSG=%DATE% %TIME%
+REM Get updated file list
+set FILES=
 
-echo Running: git commit -m "%MSG%"
-git commit -m "%MSG%"
+for /f "delims=" %%f in ('git diff --cached --name-only') do (
+    if "!FILES!"=="" (
+        set FILES=%%f
+    ) else (
+        set FILES=!FILES!, %%f
+    )
+)
+
+REM Check if no files changed
+if "!FILES!"=="" (
+    echo No changes detected.
+    pause
+    goto MENU
+)
+
+REM Get date and time
+for /f %%i in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set DATETIME=%%i
+
+REM Commit message format:
+REM Updated: file1, file2, file3 | 2026-04-28 10:45:00
+set MSG=Updated: !FILES! ^| !DATETIME!
+
+echo.
+echo Commit Message:
+echo !MSG!
+echo.
+
+echo Running: git commit
+git commit -m "!MSG!"
+
 if %ERRORLEVEL% neq 0 (
     echo Error during git commit
     pause
     goto MENU
 )
 
+echo.
 echo Running: git push
 git push
+
 if %ERRORLEVEL% neq 0 (
     echo Error during git push
     pause
@@ -77,6 +112,7 @@ echo.
 echo All Git commands completed successfully!
 pause
 goto MENU
+
 
 :EXIT
 exit
