@@ -14,7 +14,7 @@ Developer
 
 Enter option number:
 
-Update this lines with your line
+Update this lines with your path
 cd /d "D:\04_AoP\development"
 ```
 
