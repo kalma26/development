@@ -6,7 +6,6 @@ Developer
 ```text
 ==================================
         GIT UPDATE MENU
-dev: MasterDoom , eD
 ==================================
 
 [1] Check Co Dev Update
