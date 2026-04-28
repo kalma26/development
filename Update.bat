@@ -3,7 +3,7 @@ title Git Update Menu
 color 0A
 setlocal enabledelayedexpansion
 
-REM Use current folder (works on any drive where the bat file is located)
+REM Use current folder (same folder where bat file is)
 cd /d "%~dp0"
 
 :MENU
@@ -59,9 +59,8 @@ if %ERRORLEVEL% neq 0 (
     goto MENU
 )
 
-REM Get updated file list
+REM Get changed files
 set FILES=
-
 for /f "delims=" %%f in ('git diff --cached --name-only') do (
     if "!FILES!"=="" (
         set FILES=%%f
@@ -70,26 +69,24 @@ for /f "delims=" %%f in ('git diff --cached --name-only') do (
     )
 )
 
-REM Check if no files changed
 if "!FILES!"=="" (
     echo No changes detected.
     pause
     goto MENU
 )
 
-REM Get date and time
-for /f %%i in ('powershell -command "Get-Date -Format \"yyyy-MM-dd HH:mm:ss\""') do set DATETIME=%%i
+REM Full Date + Time (YYYY-MM-DD HH:MM:SS)
+for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format ''yyyy-MM-dd HH:mm:ss''"') do set DATETIME=%%i
 
-REM Commit message format:
-REM Updated: file1, file2, file3 | 2026-04-28 10:45:00
-set MSG=Updated: !FILES! ^| !DATETIME!
+REM Commit message example:
+REM [2026-04-28 11:30:45] Updated: index.php, config.php
+set MSG=[!DATETIME!] Updated: !FILES!
 
 echo.
 echo Commit Message:
 echo !MSG!
 echo.
 
-echo Running: git commit
 git commit -m "!MSG!"
 
 if %ERRORLEVEL% neq 0 (
