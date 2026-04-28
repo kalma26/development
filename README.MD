@@ -14,6 +14,9 @@ dev: MasterDoom , eD
 [0] Exit
 
 Enter option number:
+
+Update this lines with your line
+cd /d "D:\04_AoP\development"
 ```
 
 ---
